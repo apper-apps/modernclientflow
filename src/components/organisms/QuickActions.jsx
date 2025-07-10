@@ -1,10 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
 import ApperIcon from "@/components/ApperIcon";
-
+import ProjectModal from "@/components/molecules/ProjectModal";
+import ClientModal from "@/components/molecules/ClientModal";
+import InvoiceModal from "@/components/molecules/InvoiceModal";
 const QuickActions = () => {
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+
+  const handleProjectSubmit = async (projectData) => {
+    // Modal handles the submission and toast notifications
+    setIsProjectModalOpen(false);
+  };
+
+  const handleClientCreated = (newClient) => {
+    // Modal handles success notifications
+    setIsClientModalOpen(false);
+  };
+
+  const handleInvoiceSubmit = async (invoiceData) => {
+    // Modal handles the submission and toast notifications
+    setIsInvoiceModalOpen(false);
+  };
+
+  const handleActionClick = (actionTitle) => {
+    switch (actionTitle) {
+      case "New Project":
+        setIsProjectModalOpen(true);
+        break;
+      case "Add Client":
+        setIsClientModalOpen(true);
+        break;
+      case "Create Invoice":
+        setIsInvoiceModalOpen(true);
+        break;
+      case "Time Tracker":
+        // Navigate to time tracking page or show time tracker modal
+        console.log("Time Tracker clicked - functionality to be implemented");
+        break;
+      default:
+        break;
+    }
+  };
+
   const actions = [
     {
       title: "New Project",
@@ -58,7 +99,10 @@ const QuickActions = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <button className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-200 text-left group">
+<button 
+                className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-200 text-left group"
+                onClick={() => handleActionClick(action.title)}
+              >
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`w-10 h-10 bg-gradient-to-br ${action.color} rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-200`}>
                     <ApperIcon name={action.icon} size={20} className="text-white" />
@@ -82,8 +126,26 @@ const QuickActions = () => {
             <ApperIcon name="Settings" size={16} className="mr-2" />
             Customize Actions
           </Button>
-        </div>
+</div>
       </div>
+      
+      <ProjectModal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+        onSubmit={handleProjectSubmit}
+      />
+      
+      <ClientModal
+        isOpen={isClientModalOpen}
+        onClose={() => setIsClientModalOpen(false)}
+        onClientCreated={handleClientCreated}
+      />
+      
+      <InvoiceModal
+        isOpen={isInvoiceModalOpen}
+        onClose={() => setIsInvoiceModalOpen(false)}
+        onSubmit={handleInvoiceSubmit}
+      />
     </Card>
   );
 };
