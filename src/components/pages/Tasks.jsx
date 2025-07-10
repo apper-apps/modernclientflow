@@ -319,10 +319,10 @@ const getStatusIcon = (status) => {
                 }}
               />
             </motion.div>
-          )}
-        </>
-
 )}
+        </>
+      )}
+    </div>
   );
 };
 
