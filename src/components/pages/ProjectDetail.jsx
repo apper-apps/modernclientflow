@@ -10,7 +10,6 @@ import Empty from "@/components/ui/Empty";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
 import ProjectModal from "@/components/molecules/ProjectModal";
-import KanbanBoard from "@/components/molecules/KanbanBoard";
 import { getProjectById, updateProject, deleteProject } from "@/services/api/projectService";
 import { getAllClients } from "@/services/api/clientService";
 import { getAllTasks } from "@/services/api/taskService";
@@ -115,11 +114,10 @@ const ProjectDetail = () => {
     return variants[priority] || "default";
   };
 
-const getTaskStatusVariant = (status) => {
+  const getTaskStatusVariant = (status) => {
     const variants = {
       todo: "secondary",
       "in-progress": "primary",
-      review: "warning",
       done: "success"
     };
     return variants[status] || "default";
@@ -374,7 +372,7 @@ const getTaskStatusVariant = (status) => {
                 </p>
               </div>
             </div>
-<div className="space-y-1">
+            <div className="space-y-1">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">To Do</span>
                 <span className="font-medium">{tasks.filter(t => t.status === "todo").length}</span>
@@ -382,10 +380,6 @@ const getTaskStatusVariant = (status) => {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">In Progress</span>
                 <span className="font-medium">{tasks.filter(t => t.status === "in-progress").length}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Review</span>
-                <span className="font-medium">{tasks.filter(t => t.status === "review").length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Done</span>
@@ -510,27 +504,25 @@ const getTaskStatusVariant = (status) => {
         </motion.div>
       </div>
 
-{/* Tasks Kanban Board */}
+      {/* Tasks Preview */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.7 }}
       >
         <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Project Tasks ({tasks.length})
+              Tasks ({tasks.length})
             </h3>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/tasks")}
-              >
-                <ApperIcon name="ExternalLink" size={14} className="mr-2" />
-                View All Tasks
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/tasks")}
+            >
+              <ApperIcon name="ExternalLink" size={14} className="mr-2" />
+              View All Tasks
+            </Button>
           </div>
           
           {tasks.length === 0 ? (
@@ -538,16 +530,52 @@ const getTaskStatusVariant = (status) => {
               title="No Tasks"
               description="No tasks have been created for this project yet."
               icon="ListTodo"
-              actionLabel="Add Task"
-              onAction={() => navigate("/tasks")}
             />
           ) : (
-            <div className="min-h-[400px]">
-              <KanbanBoard
-                tasks={tasks}
-                onTasksChange={loadProjectDetails}
-                showAddButton={true}
-              />
+            <div className="space-y-3">
+              {tasks.slice(0, 5).map((task, index) => (
+                <motion.div
+                  key={task.Id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${
+                      task.status === "done" ? "bg-green-500" :
+                      task.status === "in-progress" ? "bg-blue-500" : "bg-gray-400"
+                    }`}></div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {task.title}
+                      </p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Due: {formatDate(task.dueDate)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={getPriorityVariant(task.priority)} size="sm">
+                      {task.priority}
+                    </Badge>
+                    <Badge variant={getTaskStatusVariant(task.status)} size="sm">
+                      {task.status}
+                    </Badge>
+                  </div>
+                </motion.div>
+              ))}
+              {tasks.length > 5 && (
+                <div className="text-center pt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate("/tasks")}
+                  >
+                    View {tasks.length - 5} more tasks
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </Card>
