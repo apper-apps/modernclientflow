@@ -9,6 +9,7 @@ import ClientDetail from "@/components/pages/ClientDetail";
 import Projects from "@/components/pages/Projects";
 import ProjectDetail from "@/components/pages/ProjectDetail";
 import Tasks from "@/components/pages/Tasks";
+import TimeTracking from "@/components/pages/TimeTracking";
 import Invoices from "@/components/pages/Invoices";
 
 function App() {
@@ -27,7 +28,8 @@ function App() {
               <Route path="/clients/:id" element={<ClientDetail />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/projects/:id" element={<ProjectDetail />} />
-              <Route path="/tasks" element={<Tasks />} />
+<Route path="/tasks" element={<Tasks />} />
+              <Route path="/time-tracking" element={<TimeTracking />} />
               <Route path="/invoices" element={<Invoices />} />
             </Routes>
           </main>

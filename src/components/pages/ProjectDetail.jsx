@@ -14,13 +14,15 @@ import KanbanBoard from "@/components/organisms/KanbanBoard";
 import { getProjectById, updateProject, deleteProject } from "@/services/api/projectService";
 import { getAllClients } from "@/services/api/clientService";
 import { getAllTasks } from "@/services/api/taskService";
+import { getProjectTimeTracking } from "@/services/api/timeTrackingService";
 
 const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [project, setProject] = useState(null);
+const [project, setProject] = useState(null);
   const [client, setClient] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [projectTimeTracking, setProjectTimeTracking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -39,10 +41,11 @@ const ProjectDetail = () => {
       setLoading(true);
       setError("");
       
-      const [projectData, clientsData, tasksData] = await Promise.all([
+const [projectData, clientsData, tasksData, timeTrackingData] = await Promise.all([
         getProjectById(id),
         getAllClients(),
-        getAllTasks()
+        getAllTasks(),
+        getProjectTimeTracking(id)
       ]);
 
       setProject(projectData);
@@ -51,9 +54,10 @@ const ProjectDetail = () => {
       const projectClient = clientsData.find(c => c.Id === parseInt(projectData.clientId));
       setClient(projectClient);
       
-      // Filter tasks for this project
+// Filter tasks for this project
       const projectTasks = tasksData.filter(t => t.projectId === String(projectData.Id));
       setTasks(projectTasks);
+      setProjectTimeTracking(timeTrackingData);
       
     } catch (err) {
       setError("Failed to load project details. Please try again.");
@@ -164,6 +168,19 @@ const getTaskStatusVariant = (status) => {
     const diffTime = end - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+};
+
+  const formatDuration = (milliseconds) => {
+    if (!milliseconds || milliseconds === 0) return "0h 0m";
+    
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
   };
 
   if (loading) {
@@ -255,8 +272,8 @@ const getTaskStatusVariant = (status) => {
         </div>
       </motion.div>
 
-      {/* Project Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+{/* Project Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -391,6 +408,43 @@ const getTaskStatusVariant = (status) => {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Done</span>
                 <span className="font-medium">{tasks.filter(t => t.status === "done").length}</span>
+              </div>
+            </div>
+          </Card>
+</motion.div>
+
+        {/* Time Tracking Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center">
+                <ApperIcon name="Timer" size={20} className="text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Time Tracked</h3>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {formatDuration(projectTimeTracking?.totalTime || 0)}
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600 dark:text-gray-400">Active Timers</span>
+                <span className="font-medium">{projectTimeTracking?.activeTimers || 0}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600 dark:text-gray-400">Time Entries</span>
+                <span className="font-medium">{projectTimeTracking?.totalEntries || 0}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600 dark:text-gray-400">Avg per Task</span>
+                <span className="font-medium">
+                  {tasks.length > 0 ? formatDuration((projectTimeTracking?.totalTime || 0) / tasks.length) : "0m"}
+                </span>
               </div>
             </div>
           </Card>

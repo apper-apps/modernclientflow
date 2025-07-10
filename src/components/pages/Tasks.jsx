@@ -11,15 +11,18 @@ import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
 import SearchBar from "@/components/molecules/SearchBar";
 import { getAllTasks } from "@/services/api/taskService";
+import { startTimer, stopTimer } from "@/services/api/timeTrackingService";
 
 const Tasks = () => {
-  const [tasks, setTasks] = useState([]);
+const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [viewMode, setViewMode] = useState("list");
+  const [activeTimers, setActiveTimers] = useState(new Map());
+  const [currentTime, setCurrentTime] = useState(Date.now());
   const loadTasks = async () => {
     try {
       setLoading(true);
@@ -32,11 +35,77 @@ const Tasks = () => {
     } finally {
       setLoading(false);
     }
-  };
+};
 
   useEffect(() => {
     loadTasks();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const loadActiveTimers = async () => {
+      const timers = new Map();
+      for (const task of tasks) {
+        if (task.timeTracking?.activeTimer) {
+          timers.set(task.Id, task.timeTracking.activeTimer);
+        }
+      }
+      setActiveTimers(timers);
+    };
+
+    loadActiveTimers();
+  }, [tasks]);
+
+  const handleStartTimer = async (taskId) => {
+    try {
+      const timerData = await startTimer(taskId);
+      setActiveTimers(prev => new Map(prev).set(taskId, timerData));
+      await loadTasks();
+      toast.success("Timer started");
+    } catch (error) {
+      toast.error("Failed to start timer");
+    }
+  };
+
+  const handleStopTimer = async (taskId) => {
+    try {
+      await stopTimer(taskId);
+      setActiveTimers(prev => {
+        const newTimers = new Map(prev);
+        newTimers.delete(taskId);
+        return newTimers;
+      });
+      await loadTasks();
+      toast.success("Timer stopped");
+    } catch (error) {
+      toast.error("Failed to stop timer");
+    }
+  };
+
+  const formatDuration = (milliseconds) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const getElapsedTime = (taskId) => {
+    const timer = activeTimers.get(taskId);
+    if (!timer) return 0;
+    return currentTime - new Date(timer.startTime).getTime();
+  };
 
   const filteredTasks = tasks.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -269,7 +338,7 @@ const getStatusIcon = (status) => {
                             {task.status.replace("-", " ")}
                           </Badge>
                         </div>
-                      </div>
+</div>
                       
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
@@ -293,6 +362,46 @@ const getStatusIcon = (status) => {
                             <ApperIcon name="MoreHorizontal" size={14} />
                           </Button>
                         </div>
+                      </div>
+
+                      {/* Time Tracking Section */}
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-3">
+                          {activeTimers.has(task.Id) && (
+                            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                              <span className="font-mono">
+                                {formatDuration(getElapsedTime(task.Id))}
+                              </span>
+                            </div>
+                          )}
+                          {task.timeTracking?.totalTime > 0 && !activeTimers.has(task.Id) && (
+                            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                              <ApperIcon name="Clock" size={14} />
+                              <span className="font-mono">
+                                {formatDuration(task.timeTracking.totalTime)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <Button
+                          variant={activeTimers.has(task.Id) ? "error" : "primary"}
+                          size="sm"
+                          onClick={() => {
+                            if (activeTimers.has(task.Id)) {
+                              handleStopTimer(task.Id);
+                            } else {
+                              handleStartTimer(task.Id);
+                            }
+                          }}
+                          className="flex items-center gap-1"
+                        >
+                          <ApperIcon 
+                            name={activeTimers.has(task.Id) ? "Square" : "Play"} 
+                            size={14} 
+                          />
+                          {activeTimers.has(task.Id) ? "Stop" : "Start"}
+                        </Button>
                       </div>
                     </div>
                   </div>

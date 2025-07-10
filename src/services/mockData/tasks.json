@@ -5,23 +5,62 @@
     "title": "Create wireframes for homepage",
     "priority": "high",
     "status": "done",
-    "dueDate": "2024-01-20T00:00:00Z"
+    "dueDate": "2024-01-20T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 7200000,
+      "activeTimer": null,
+      "timeLogs": [
+        {
+          "Id": 1,
+          "startTime": "2024-01-19T09:00:00Z",
+          "endTime": "2024-01-19T11:00:00Z",
+          "duration": 7200000,
+          "date": "2024-01-19"
+        }
+      ]
+    }
   },
-  {
+{
     "Id": 2,
     "projectId": "1",
     "title": "Design header component",
     "priority": "medium",
     "status": "done",
-    "dueDate": "2024-01-25T00:00:00Z"
+    "dueDate": "2024-01-25T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 5400000,
+      "activeTimer": null,
+      "timeLogs": [
+        {
+          "Id": 2,
+          "startTime": "2024-01-24T14:00:00Z",
+          "endTime": "2024-01-24T15:30:00Z",
+          "duration": 5400000,
+          "date": "2024-01-24"
+        }
+      ]
+    }
   },
-  {
+{
     "Id": 3,
     "projectId": "2",
     "title": "Set up development environment",
     "priority": "high",
     "status": "done",
-    "dueDate": "2024-02-05T00:00:00Z"
+    "dueDate": "2024-02-05T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 10800000,
+      "activeTimer": null,
+      "timeLogs": [
+        {
+          "Id": 3,
+          "startTime": "2024-02-04T10:00:00Z",
+          "endTime": "2024-02-04T13:00:00Z",
+          "duration": 10800000,
+          "date": "2024-02-04"
+        }
+      ]
+    }
   },
 {
     "Id": 4,
@@ -29,15 +68,36 @@
     "title": "Implement user authentication",
     "priority": "high",
     "status": "review",
-    "dueDate": "2024-03-25T00:00:00Z"
+    "dueDate": "2024-03-25T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": {
+        "Id": 4,
+        "startTime": "2024-03-24T14:30:00Z"
+      },
+      "timeLogs": []
+    }
   },
-  {
+{
     "Id": 5,
     "projectId": "3",
     "title": "Research brand competitors",
     "priority": "medium",
     "status": "done",
-    "dueDate": "2024-02-20T00:00:00Z"
+    "dueDate": "2024-02-20T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 14400000,
+      "activeTimer": null,
+      "timeLogs": [
+        {
+          "Id": 5,
+          "startTime": "2024-02-19T09:00:00Z",
+          "endTime": "2024-02-19T13:00:00Z",
+          "duration": 14400000,
+          "date": "2024-02-19"
+        }
+      ]
+    }
   },
   {
     "Id": 6,
@@ -45,7 +105,20 @@
     "title": "Create logo concepts",
     "priority": "high",
     "status": "done",
-    "dueDate": "2024-03-05T00:00:00Z"
+    "dueDate": "2024-03-05T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 9000000,
+      "activeTimer": null,
+      "timeLogs": [
+        {
+          "Id": 6,
+          "startTime": "2024-03-04T10:00:00Z",
+          "endTime": "2024-03-04T12:30:00Z",
+          "duration": 9000000,
+          "date": "2024-03-04"
+        }
+      ]
+    }
   },
   {
     "Id": 7,
@@ -53,7 +126,20 @@
     "title": "Set up product catalog",
     "priority": "high",
     "status": "in-progress",
-    "dueDate": "2024-03-30T00:00:00Z"
+    "dueDate": "2024-03-30T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 3600000,
+      "activeTimer": null,
+      "timeLogs": [
+        {
+          "Id": 7,
+          "startTime": "2024-03-29T15:00:00Z",
+          "endTime": "2024-03-29T16:00:00Z",
+          "duration": 3600000,
+          "date": "2024-03-29"
+        }
+      ]
+    }
   },
   {
     "Id": 8,
@@ -61,7 +147,12 @@
     "title": "Implement shopping cart",
     "priority": "high",
     "status": "todo",
-    "dueDate": "2024-04-15T00:00:00Z"
+    "dueDate": "2024-04-15T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 9,
@@ -69,7 +160,12 @@
     "title": "Define system requirements",
     "priority": "high",
     "status": "todo",
-    "dueDate": "2024-04-05T00:00:00Z"
+    "dueDate": "2024-04-05T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 10,
@@ -77,7 +173,20 @@
     "title": "API documentation review",
     "priority": "medium",
     "status": "in-progress",
-    "dueDate": "2024-03-20T00:00:00Z"
+    "dueDate": "2024-03-20T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 1800000,
+      "activeTimer": null,
+      "timeLogs": [
+        {
+          "Id": 10,
+          "startTime": "2024-03-19T11:00:00Z",
+          "endTime": "2024-03-19T11:30:00Z",
+          "duration": 1800000,
+          "date": "2024-03-19"
+        }
+      ]
+    }
   },
   {
     "Id": 11,
@@ -85,7 +194,12 @@
     "title": "Test API endpoints",
     "priority": "high",
     "status": "todo",
-    "dueDate": "2024-04-10T00:00:00Z"
+    "dueDate": "2024-04-10T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 12,
@@ -93,15 +207,33 @@
     "title": "Keyword research",
     "priority": "low",
     "status": "todo",
-    "dueDate": "2024-03-15T00:00:00Z"
+    "dueDate": "2024-03-15T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
-{
+  {
     "Id": 13,
     "projectId": "8",
     "title": "Create social media content",
     "priority": "medium",
     "status": "review",
-    "dueDate": "2024-03-22T00:00:00Z"
+    "dueDate": "2024-03-22T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 7200000,
+      "activeTimer": null,
+      "timeLogs": [
+        {
+          "Id": 13,
+          "startTime": "2024-03-21T14:00:00Z",
+          "endTime": "2024-03-21T16:00:00Z",
+          "duration": 7200000,
+          "date": "2024-03-21"
+        }
+      ]
+    }
   },
   {
     "Id": 14,
@@ -109,15 +241,25 @@
     "title": "Set up analytics tracking",
     "priority": "high",
     "status": "todo",
-    "dueDate": "2024-04-01T00:00:00Z"
+    "dueDate": "2024-04-01T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
-{
+  {
     "Id": 15,
     "projectId": "2",
     "title": "Design user interface",
     "priority": "high",
     "status": "review",
-    "dueDate": "2024-03-28T00:00:00Z"
+    "dueDate": "2024-03-28T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 16,
@@ -125,7 +267,12 @@
     "title": "Payment gateway integration",
     "priority": "high",
     "status": "todo",
-    "dueDate": "2024-04-20T00:00:00Z"
+    "dueDate": "2024-04-20T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 17,
@@ -133,7 +280,12 @@
     "title": "Database optimization",
     "priority": "medium",
     "status": "todo",
-    "dueDate": "2024-04-05T00:00:00Z"
+    "dueDate": "2024-04-05T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 18,
@@ -141,7 +293,12 @@
     "title": "Content audit",
     "priority": "low",
     "status": "todo",
-    "dueDate": "2024-03-10T00:00:00Z"
+    "dueDate": "2024-03-10T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 19,
@@ -149,7 +306,12 @@
     "title": "A/B test landing pages",
     "priority": "medium",
     "status": "todo",
-    "dueDate": "2024-04-08T00:00:00Z"
+    "dueDate": "2024-04-08T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 20,
@@ -157,7 +319,12 @@
     "title": "Performance optimization",
     "priority": "medium",
     "status": "todo",
-    "dueDate": "2024-04-25T00:00:00Z"
+    "dueDate": "2024-04-25T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 21,
@@ -165,7 +332,12 @@
     "title": "Security audit",
     "priority": "high",
     "status": "todo",
-    "dueDate": "2024-05-15T00:00:00Z"
+    "dueDate": "2024-05-15T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 22,
@@ -173,7 +345,12 @@
     "title": "User training materials",
     "priority": "low",
     "status": "todo",
-    "dueDate": "2024-06-01T00:00:00Z"
+    "dueDate": "2024-06-01T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 23,
@@ -181,7 +358,12 @@
     "title": "Load testing",
     "priority": "medium",
     "status": "todo",
-    "dueDate": "2024-04-18T00:00:00Z"
+    "dueDate": "2024-04-18T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   },
   {
     "Id": 24,
@@ -189,6 +371,11 @@
     "title": "Campaign performance review",
     "priority": "low",
     "status": "todo",
-    "dueDate": "2024-04-30T00:00:00Z"
+    "dueDate": "2024-04-30T00:00:00Z",
+    "timeTracking": {
+      "totalTime": 0,
+      "activeTimer": null,
+      "timeLogs": []
+    }
   }
 ]
