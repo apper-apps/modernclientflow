@@ -53,6 +53,19 @@ export const deleteTask = async (id) => {
     throw new Error("Task not found");
   }
   
-  tasks.splice(index, 1);
+tasks.splice(index, 1);
   return true;
+};
+
+export const updateTaskStatus = async (id, status) => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 200));
+  
+  const index = tasks.findIndex(t => t.Id === parseInt(id));
+  if (index === -1) {
+    throw new Error("Task not found");
+  }
+  
+  tasks[index] = { ...tasks[index], status };
+  return { ...tasks[index] };
 };
