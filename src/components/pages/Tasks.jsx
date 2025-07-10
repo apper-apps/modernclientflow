@@ -214,8 +214,11 @@ const getStatusIcon = (status) => {
               <ApperIcon name="Columns" size={14} className="mr-1" />
               Kanban
             </Button>
-          </div>
-          <Button variant="primary">
+</div>
+          <Button 
+            variant="primary"
+            onClick={() => toast.info("Task creation will be available soon. For now, tasks are managed through projects.")}
+          >
             <ApperIcon name="Plus" size={16} className="mr-2" />
             Add Task
           </Button>
@@ -354,8 +357,12 @@ const getStatusIcon = (status) => {
                           )}
                         </div>
                         
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="sm">
+<div className="flex items-center gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => toast.info("Task editing is available through the Project detail page.")}
+                          >
                             <ApperIcon name="Edit2" size={14} />
                           </Button>
                           <Button variant="ghost" size="sm">

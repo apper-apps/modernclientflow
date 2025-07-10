@@ -19,8 +19,9 @@ const Invoices = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+const [statusFilter, setStatusFilter] = useState("all");
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [editingInvoice, setEditingInvoice] = useState(null);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
   const [paymentDate, setPaymentDate] = useState("");
@@ -124,13 +125,41 @@ const getStatusIcon = (status) => {
     setSelectedInvoiceId(null);
     setPaymentDate("");
   };
+const handleNewInvoiceClick = () => {
+    setEditingInvoice(null);
+    setIsInvoiceModalOpen(true);
+  };
 
-  const handleNewInvoiceClick = () => {
+  const handleEditInvoice = (invoice) => {
+    setEditingInvoice(invoice);
+    setIsInvoiceModalOpen(true);
+  };
+
+  const handleViewInvoice = (invoice) => {
+    // For now, open in edit mode for viewing
+    setEditingInvoice(invoice);
     setIsInvoiceModalOpen(true);
   };
 
   const handleCloseInvoiceModal = () => {
     setIsInvoiceModalOpen(false);
+    setEditingInvoice(null);
+  };
+
+  const handleInvoiceSubmit = async (invoiceData) => {
+    try {
+      if (editingInvoice) {
+        // Handle invoice update logic here
+        await loadInvoices();
+        toast.success("Invoice updated successfully");
+      } else {
+        await createInvoice(invoiceData);
+        await loadInvoices();
+        toast.success("Invoice created successfully");
+      }
+    } catch (error) {
+      throw error;
+    }
   };
 
   if (loading) {
@@ -303,10 +332,23 @@ return (
               </div>
               
 <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button variant="outline" size="sm">
-                  <ApperIcon name="Eye" size={14} className="mr-2" />
-                  View
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleViewInvoice(invoice)}
+                  >
+                    <ApperIcon name="Eye" size={14} className="mr-2" />
+                    View
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleEditInvoice(invoice)}
+                  >
+                    <ApperIcon name="Edit2" size={14} />
+                  </Button>
+                </div>
                 
                 <div className="flex items-center gap-2">
                   {invoice.status === "draft" && (
@@ -364,7 +406,8 @@ return (
       <InvoiceModal
         isOpen={isInvoiceModalOpen}
         onClose={handleCloseInvoiceModal}
-        onSubmit={handleCreateInvoice}
+        onSubmit={handleInvoiceSubmit}
+        initialData={editingInvoice}
       />
 
       {/* Payment Date Modal */}

@@ -188,23 +188,38 @@ const Clients = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+<div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.location.href = `mailto:${client.email}`;
+                    }}
                   >
                     <ApperIcon name="MessageSquare" size={14} className="mr-2" />
                     Contact
                   </Button>
                   
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <ApperIcon name="MoreHorizontal" size={16} />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/clients/${client.Id}`);
+                      }}
+                    >
+                      <ApperIcon name="Eye" size={14} />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ApperIcon name="MoreHorizontal" size={16} />
+                    </Button>
+                  </div>
                 </div>
               </Card>
             </div>

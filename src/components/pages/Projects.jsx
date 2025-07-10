@@ -23,8 +23,10 @@ const Projects = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-const loadProjects = async () => {
+const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+
+  const loadProjects = async () => {
     try {
       setLoading(true);
       setError("");
@@ -45,6 +47,34 @@ const loadProjects = async () => {
   useEffect(() => {
     loadProjects();
   }, []);
+
+  const handleEditProject = (project) => {
+    setEditingProject(project);
+    setIsModalOpen(true);
+  };
+
+  const handleProjectSubmit = async (projectData) => {
+    try {
+      if (editingProject) {
+        // Handle project update
+        await loadProjects();
+        toast.success("Project updated successfully");
+      } else {
+        // Handle project creation
+        await loadProjects();
+        toast.success("Project created successfully");
+      }
+      setIsModalOpen(false);
+      setEditingProject(null);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingProject(null);
+  };
 
 const getClientName = (clientId) => {
     const client = clients.find(c => c.Id === clientId);
@@ -255,9 +285,12 @@ actionLabel="Create Project"
                   <ApperIcon name="Eye" size={14} className="mr-2" />
                   View
                 </Button>
-                
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
+<div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => handleEditProject(project)}
+                  >
                     <ApperIcon name="Edit2" size={14} />
                   </Button>
                   <Button variant="ghost" size="sm">
@@ -289,11 +322,13 @@ actionLabel="Create Project"
 </motion.div>
       )}
 
-      {/* Project Modal */}
+{/* Project Modal */}
       <ProjectModal 
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onProjectCreated={loadProjects}
+        onClose={handleCloseModal}
+        onSubmit={handleProjectSubmit}
+        project={editingProject}
+        title={editingProject ? "Edit Project" : "Create New Project"}
         clients={clients}
       />
     </div>

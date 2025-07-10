@@ -274,7 +274,11 @@ const ClientDetail = () => {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
               Projects ({projects.length})
             </h2>
-            <Button variant="outline" size="sm">
+<Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate(`/projects?clientId=${client.Id}`)}
+            >
               <ApperIcon name="Plus" size={16} className="mr-2" />
               New Project
             </Button>
