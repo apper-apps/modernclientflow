@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import InvoiceModal from "@/components/molecules/InvoiceModal";
+import ApperIcon from "@/components/ApperIcon";
+import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 import Card from "@/components/atoms/Card";
-import Badge from "@/components/atoms/Badge";
-import SearchBar from "@/components/molecules/SearchBar";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
-import { getAllInvoices } from "@/services/api/invoiceService";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import SearchBar from "@/components/molecules/SearchBar";
+import { createInvoice, getAllInvoices } from "@/services/api/invoiceService";
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -17,6 +18,7 @@ const Invoices = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   const loadInvoices = async () => {
     try {
@@ -61,6 +63,23 @@ const Invoices = () => {
       overdue: "AlertTriangle"
     };
     return icons[status] || "Circle";
+};
+
+  const handleCreateInvoice = async (invoiceData) => {
+    try {
+      await createInvoice(invoiceData);
+      await loadInvoices();
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleNewInvoiceClick = () => {
+    setIsInvoiceModalOpen(true);
+  };
+
+  const handleCloseInvoiceModal = () => {
+    setIsInvoiceModalOpen(false);
   };
 
   if (loading) {
@@ -76,9 +95,9 @@ const Invoices = () => {
       <Empty
         title="No Invoices Yet"
         description="Create your first invoice to start billing clients"
-        icon="FileText"
+icon="FileText"
         actionLabel="Create Invoice"
-        onAction={() => toast.info("Create invoice functionality coming soon!")}
+        onAction={handleNewInvoiceClick}
       />
     );
   }
@@ -106,7 +125,7 @@ const Invoices = () => {
           </p>
         </div>
         
-        <Button variant="primary">
+<Button variant="primary" onClick={handleNewInvoiceClick}>
           <ApperIcon name="Plus" size={16} className="mr-2" />
           New Invoice
         </Button>
@@ -262,10 +281,16 @@ const Invoices = () => {
               setSearchTerm("");
               setStatusFilter("all");
             }}
-          />
+/>
         </motion.div>
       )}
-    </div>
+
+      {/* Invoice Modal */}
+      <InvoiceModal
+        isOpen={isInvoiceModalOpen}
+        onClose={handleCloseInvoiceModal}
+        onSubmit={handleCreateInvoice}
+      />
   );
 };
 
