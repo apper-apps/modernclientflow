@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import Button from "@/components/atoms/Button";
@@ -13,12 +14,12 @@ import ClientModal from "@/components/molecules/ClientModal";
 import { getAllClients } from "@/services/api/clientService";
 
 const Clients = () => {
+  const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
-
   const loadClients = async () => {
     try {
       setLoading(true);
@@ -35,6 +36,10 @@ const Clients = () => {
 
   const handleClientCreated = (newClient) => {
     setClients(prev => [...prev, newClient]);
+};
+
+  const handleClientClick = (clientId) => {
+    navigate(`/clients/${clientId}`);
   };
 
   useEffect(() => {
@@ -145,51 +150,64 @@ const Clients = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
-          >
-            <Card hover className="p-6 h-full">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
-                    {client.name.charAt(0).toUpperCase()}
+>
+            <div
+              onClick={() => handleClientClick(client.Id)}
+              className="cursor-pointer"
+            >
+              <Card hover className="p-6 h-full transition-all duration-200 hover:shadow-lg">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white font-semibold shadow-lg">
+                      {client.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                        {client.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                        {client.company}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 dark:text-white truncate">
-                      {client.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                      {client.company}
-                    </p>
+                  
+                  <Badge variant={client.status === "active" ? "success" : "secondary"}>
+                    {client.status}
+                  </Badge>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <ApperIcon name="Mail" size={14} />
+                    <span className="truncate">{client.email}</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <ApperIcon name="Calendar" size={14} />
+                    <span>Client since {new Date(client.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
                 
-                <Badge variant={client.status === "active" ? "success" : "secondary"}>
-                  {client.status}
-                </Badge>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <ApperIcon name="Mail" size={14} />
-                  <span className="truncate">{client.email}</span>
+                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ApperIcon name="MessageSquare" size={14} className="mr-2" />
+                    Contact
+                  </Button>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ApperIcon name="MoreHorizontal" size={16} />
+                  </Button>
                 </div>
-                
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <ApperIcon name="Calendar" size={14} />
-                  <span>Client since {new Date(client.createdAt).toLocaleDateString()}</span>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button variant="outline" size="sm">
-                  <ApperIcon name="MessageSquare" size={14} className="mr-2" />
-                  Contact
-                </Button>
-                
-                <Button variant="ghost" size="sm">
-                  <ApperIcon name="MoreHorizontal" size={16} />
-                </Button>
-              </div>
-            </Card>
+              </Card>
+            </div>
           </motion.div>
         ))}
       </motion.div>

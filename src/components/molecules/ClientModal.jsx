@@ -4,10 +4,10 @@ import Modal from "@/components/atoms/Modal";
 import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
 import ApperIcon from "@/components/ApperIcon";
-import { createClient } from "@/services/api/clientService";
+import { createClient, updateClient } from "@/services/api/clientService";
 
-const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
-  const [formData, setFormData] = useState({
+const ClientModal = ({ isOpen, onClose, onClientCreated, onClientUpdated, client, mode = "create" }) => {
+const [formData, setFormData] = useState({
     name: "",
     email: "",
     company: "",
@@ -16,6 +16,28 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Initialize form data when client prop changes (for edit mode)
+  React.useEffect(() => {
+    if (mode === "edit" && client) {
+      setFormData({
+        name: client.name || "",
+        email: client.email || "",
+        company: client.company || "",
+        notes: client.notes || "",
+        status: client.status || "active"
+      });
+    } else {
+      setFormData({
+        name: "",
+        email: "",
+        company: "",
+        notes: "",
+        status: "active"
+      });
+    }
+    setErrors({});
+  }, [client, mode, isOpen]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -61,11 +83,18 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
       return;
     }
     
-    setLoading(true);
+setLoading(true);
     
     try {
-      const newClient = await createClient(formData);
-      toast.success("Client created successfully!");
+      if (mode === "edit") {
+        const updatedClient = await updateClient(client.Id, formData);
+        toast.success("Client updated successfully!");
+        onClientUpdated?.(updatedClient);
+      } else {
+        const newClient = await createClient(formData);
+        toast.success("Client created successfully!");
+        onClientCreated?.(newClient);
+      }
       
       // Reset form
       setFormData({
@@ -77,11 +106,9 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
       });
       setErrors({});
       
-      // Notify parent and close modal
-      onClientCreated?.(newClient);
       onClose();
     } catch (error) {
-      toast.error("Failed to create client. Please try again.");
+      toast.error(mode === "edit" ? "Failed to update client. Please try again." : "Failed to create client. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -103,9 +130,9 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
 
   return (
     <Modal
-      isOpen={isOpen}
+isOpen={isOpen}
       onClose={handleClose}
-      title="Add New Client"
+      title={mode === "edit" ? "Edit Client" : "Add New Client"}
       size="md"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -220,15 +247,15 @@ const ClientModal = ({ isOpen, onClose, onClientCreated }) => {
             disabled={loading}
             className="flex-1"
           >
-            {loading ? (
+{loading ? (
               <>
                 <ApperIcon name="Loader2" size={16} className="mr-2 animate-spin" />
-                Creating...
+                {mode === "edit" ? "Updating..." : "Creating..."}
               </>
             ) : (
               <>
-                <ApperIcon name="UserPlus" size={16} className="mr-2" />
-                Create Client
+                <ApperIcon name={mode === "edit" ? "Save" : "UserPlus"} size={16} className="mr-2" />
+                {mode === "edit" ? "Update Client" : "Create Client"}
               </>
             )}
           </Button>

@@ -5,6 +5,7 @@ import Sidebar from "@/components/organisms/Sidebar";
 import Header from "@/components/organisms/Header";
 import Dashboard from "@/components/pages/Dashboard";
 import Clients from "@/components/pages/Clients";
+import ClientDetail from "@/components/pages/ClientDetail";
 import Projects from "@/components/pages/Projects";
 import Tasks from "@/components/pages/Tasks";
 import Invoices from "@/components/pages/Invoices";
@@ -20,8 +21,9 @@ function App() {
           
           <main className="flex-1 overflow-auto">
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+<Route path="/" element={<Dashboard />} />
               <Route path="/clients" element={<Clients />} />
+              <Route path="/clients/:id" element={<ClientDetail />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/invoices" element={<Invoices />} />
