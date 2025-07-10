@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1,
+    "clientId": "1",
+    "name": "Website Redesign",
+    "status": "completed",
+    "budget": 25000,
+    "startDate": "2024-01-15T00:00:00Z",
+    "endDate": "2024-03-15T00:00:00Z"
+  },
+  {
+    "Id": 2,
+    "clientId": "2",
+    "name": "Mobile App Development",
+    "status": "active",
+    "budget": 45000,
+    "startDate": "2024-02-01T00:00:00Z",
+    "endDate": "2024-05-01T00:00:00Z"
+  },
+  {
+    "Id": 3,
+    "clientId": "3",
+    "name": "Brand Identity Design",
+    "status": "completed",
+    "budget": 15000,
+    "startDate": "2024-02-15T00:00:00Z",
+    "endDate": "2024-03-30T00:00:00Z"
+  },
+  {
+    "Id": 4,
+    "clientId": "4",
+    "name": "E-commerce Platform",
+    "status": "active",
+    "budget": 35000,
+    "startDate": "2024-03-01T00:00:00Z",
+    "endDate": "2024-06-01T00:00:00Z"
+  },
+  {
+    "Id": 5,
+    "clientId": "6",
+    "name": "Content Management System",
+    "status": "planning",
+    "budget": 20000,
+    "startDate": "2024-04-01T00:00:00Z",
+    "endDate": "2024-07-01T00:00:00Z"
+  },
+  {
+    "Id": 6,
+    "clientId": "7",
+    "name": "API Integration",
+    "status": "active",
+    "budget": 18000,
+    "startDate": "2024-02-20T00:00:00Z",
+    "endDate": "2024-04-20T00:00:00Z"
+  },
+  {
+    "Id": 7,
+    "clientId": "8",
+    "name": "SEO Optimization",
+    "status": "on-hold",
+    "budget": 8000,
+    "startDate": "2024-03-05T00:00:00Z",
+    "endDate": "2024-05-05T00:00:00Z"
+  },
+  {
+    "Id": 8,
+    "clientId": "10",
+    "name": "Digital Marketing Campaign",
+    "status": "active",
+    "budget": 12000,
+    "startDate": "2024-02-28T00:00:00Z",
+    "endDate": "2024-04-28T00:00:00Z"
+  }
+]

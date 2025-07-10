@@ -1,0 +1,73 @@
+@import 'react-toastify/dist/ReactToastify.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom toast styling */
+.Toastify__toast {
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  padding: 16px;
+  min-height: auto;
+}
+
+.Toastify__toast--success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.Toastify__toast--info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+}
+
+.Toastify__close-button {
+  color: white;
+  opacity: 0.8;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: theme('colors.gray.200');
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Dark mode adjustments */
+.dark .Toastify__toast {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+.dark .Toastify__toast--success {
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.dark .Toastify__toast--error {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.dark .Toastify__toast--info {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
