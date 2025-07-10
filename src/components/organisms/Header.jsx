@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import Button from "@/components/atoms/Button";
 import ThemeToggle from "@/components/molecules/ThemeToggle";
 import ApperIcon from "@/components/ApperIcon";
@@ -7,7 +6,6 @@ import { useSidebar } from "@/hooks/useSidebar";
 
 const Header = () => {
   const { toggleSidebar } = useSidebar();
-  const navigate = useNavigate();
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-4 lg:px-6 py-4">
@@ -39,12 +37,7 @@ const Header = () => {
           
           <ThemeToggle />
           
-<Button 
-            variant="primary" 
-            size="sm" 
-            className="hidden sm:flex"
-            onClick={() => navigate('/projects?create=true')}
-          >
+          <Button variant="primary" size="sm" className="hidden sm:flex">
             <ApperIcon name="Plus" size={16} className="mr-2" />
             New Project
           </Button>

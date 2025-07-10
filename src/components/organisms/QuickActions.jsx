@@ -1,45 +1,38 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Card from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
 import ApperIcon from "@/components/ApperIcon";
 
 const QuickActions = () => {
-  const navigate = useNavigate();
-  
   const actions = [
     {
       title: "New Project",
       description: "Start a new client project",
       icon: "FolderPlus",
       color: "from-blue-500 to-blue-600",
-      delay: 0,
-      action: () => navigate('/projects?create=true')
+      delay: 0
     },
     {
       title: "Add Client",
       description: "Add a new client to your roster",
       icon: "UserPlus",
       color: "from-green-500 to-green-600",
-      delay: 0.1,
-      action: () => navigate('/clients?create=true')
+      delay: 0.1
     },
     {
       title: "Create Invoice",
       description: "Generate a new invoice",
       icon: "FileText",
       color: "from-purple-500 to-purple-600",
-      delay: 0.2,
-      action: () => navigate('/invoices?create=true')
+      delay: 0.2
     },
     {
       title: "Time Tracker",
       description: "Track time for current tasks",
       icon: "Clock",
       color: "from-orange-500 to-orange-600",
-      delay: 0.3,
-      action: () => navigate('/time-tracking')
+      delay: 0.3
     }
   ];
 
@@ -65,10 +58,7 @@ const QuickActions = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-<button 
-                onClick={action.action}
-                className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-200 text-left group"
-              >
+              <button className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-200 text-left group">
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`w-10 h-10 bg-gradient-to-br ${action.color} rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-200`}>
                     <ApperIcon name={action.icon} size={20} className="text-white" />
@@ -85,7 +75,14 @@ const QuickActions = () => {
               </button>
             </motion.div>
           ))}
-</div>
+        </div>
+        
+        <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <Button variant="outline" className="w-full">
+            <ApperIcon name="Settings" size={16} className="mr-2" />
+            Customize Actions
+          </Button>
+        </div>
       </div>
     </Card>
   );
