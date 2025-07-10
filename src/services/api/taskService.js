@@ -44,6 +44,19 @@ export const updateTask = async (id, taskData) => {
   return { ...tasks[index] };
 };
 
+export const updateTaskStatus = async (id, status) => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 200));
+  
+  const index = tasks.findIndex(t => t.Id === parseInt(id));
+  if (index === -1) {
+    throw new Error("Task not found");
+  }
+  
+  tasks[index] = { ...tasks[index], status };
+  return { ...tasks[index] };
+};
+
 export const deleteTask = async (id) => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 200));

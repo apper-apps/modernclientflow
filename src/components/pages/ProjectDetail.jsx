@@ -10,6 +10,7 @@ import Empty from "@/components/ui/Empty";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
 import ProjectModal from "@/components/molecules/ProjectModal";
+import KanbanBoard from "@/components/organisms/KanbanBoard";
 import { getProjectById, updateProject, deleteProject } from "@/services/api/projectService";
 import { getAllClients } from "@/services/api/clientService";
 import { getAllTasks } from "@/services/api/taskService";
@@ -25,6 +26,7 @@ const ProjectDetail = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [taskViewMode, setTaskViewMode] = useState("list");
 
   useEffect(() => {
     if (id) {
@@ -114,10 +116,11 @@ const ProjectDetail = () => {
     return variants[priority] || "default";
   };
 
-  const getTaskStatusVariant = (status) => {
+const getTaskStatusVariant = (status) => {
     const variants = {
       todo: "secondary",
       "in-progress": "primary",
+      review: "warning",
       done: "success"
     };
     return variants[status] || "default";
@@ -372,7 +375,7 @@ const ProjectDetail = () => {
                 </p>
               </div>
             </div>
-            <div className="space-y-1">
+<div className="space-y-1">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">To Do</span>
                 <span className="font-medium">{tasks.filter(t => t.status === "todo").length}</span>
@@ -380,6 +383,10 @@ const ProjectDetail = () => {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">In Progress</span>
                 <span className="font-medium">{tasks.filter(t => t.status === "in-progress").length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600 dark:text-gray-400">Review</span>
+                <span className="font-medium">{tasks.filter(t => t.status === "review").length}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Done</span>
@@ -511,26 +518,52 @@ const ProjectDetail = () => {
         transition={{ duration: 0.5, delay: 0.7 }}
       >
         <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
+<div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Tasks ({tasks.length})
             </h3>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/tasks")}
-            >
-              <ApperIcon name="ExternalLink" size={14} className="mr-2" />
-              View All Tasks
-            </Button>
+            <div className="flex items-center gap-2">
+              <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <Button
+                  variant={taskViewMode === "list" ? "primary" : "ghost"}
+                  size="sm"
+                  onClick={() => setTaskViewMode("list")}
+                  className="px-3 py-1.5"
+                >
+                  <ApperIcon name="List" size={12} className="mr-1" />
+                  List
+                </Button>
+                <Button
+                  variant={taskViewMode === "kanban" ? "primary" : "ghost"}
+                  size="sm"
+                  onClick={() => setTaskViewMode("kanban")}
+                  className="px-3 py-1.5"
+                >
+                  <ApperIcon name="Columns" size={12} className="mr-1" />
+                  Kanban
+                </Button>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/tasks")}
+              >
+                <ApperIcon name="ExternalLink" size={14} className="mr-2" />
+                View All Tasks
+              </Button>
+            </div>
           </div>
           
-          {tasks.length === 0 ? (
+{tasks.length === 0 ? (
             <Empty
               title="No Tasks"
               description="No tasks have been created for this project yet."
               icon="ListTodo"
             />
+          ) : taskViewMode === "kanban" ? (
+            <div className="mt-4">
+              <KanbanBoard tasks={tasks} projectId={parseInt(id)} onTaskUpdate={loadProjectDetails} />
+            </div>
           ) : (
             <div className="space-y-3">
               {tasks.slice(0, 5).map((task, index) => (
@@ -544,7 +577,8 @@ const ProjectDetail = () => {
                   <div className="flex items-center gap-3">
                     <div className={`w-2 h-2 rounded-full ${
                       task.status === "done" ? "bg-green-500" :
-                      task.status === "in-progress" ? "bg-blue-500" : "bg-gray-400"
+                      task.status === "in-progress" ? "bg-blue-500" : 
+                      task.status === "review" ? "bg-yellow-500" : "bg-gray-400"
                     }`}></div>
                     <div>
                       <p className="text-sm font-medium text-gray-900 dark:text-white">

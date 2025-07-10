@@ -23,12 +23,12 @@
     "status": "done",
     "dueDate": "2024-02-05T00:00:00Z"
   },
-  {
+{
     "Id": 4,
     "projectId": "2",
     "title": "Implement user authentication",
     "priority": "high",
-    "status": "in-progress",
+    "status": "review",
     "dueDate": "2024-03-25T00:00:00Z"
   },
   {
@@ -95,12 +95,12 @@
     "status": "todo",
     "dueDate": "2024-03-15T00:00:00Z"
   },
-  {
+{
     "Id": 13,
     "projectId": "8",
     "title": "Create social media content",
     "priority": "medium",
-    "status": "in-progress",
+    "status": "review",
     "dueDate": "2024-03-22T00:00:00Z"
   },
   {
@@ -111,12 +111,12 @@
     "status": "todo",
     "dueDate": "2024-04-01T00:00:00Z"
   },
-  {
+{
     "Id": 15,
     "projectId": "2",
     "title": "Design user interface",
     "priority": "high",
-    "status": "in-progress",
+    "status": "review",
     "dueDate": "2024-03-28T00:00:00Z"
   },
   {
