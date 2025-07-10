@@ -9,6 +9,7 @@ import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import ApperIcon from "@/components/ApperIcon";
+import ClientModal from "@/components/molecules/ClientModal";
 import { getAllClients } from "@/services/api/clientService";
 
 const Clients = () => {
@@ -16,6 +17,7 @@ const Clients = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   const loadClients = async () => {
     try {
@@ -29,6 +31,10 @@ const Clients = () => {
     } finally {
       setLoading(false);
     }
+};
+
+  const handleClientCreated = (newClient) => {
+    setClients(prev => [...prev, newClient]);
   };
 
   useEffect(() => {
@@ -51,12 +57,12 @@ const Clients = () => {
 
   if (clients.length === 0) {
     return (
-      <Empty
+<Empty
         title="No Clients Yet"
         description="Start building your client base by adding your first client"
         icon="Users"
         actionLabel="Add First Client"
-        onAction={() => toast.info("Add client functionality coming soon!")}
+        onAction={() => setShowModal(true)}
       />
     );
   }
@@ -84,7 +90,7 @@ const Clients = () => {
           </p>
         </div>
         
-        <Button variant="primary">
+<Button variant="primary" onClick={() => setShowModal(true)}>
           <ApperIcon name="UserPlus" size={16} className="mr-2" />
           Add Client
         </Button>
@@ -201,8 +207,15 @@ const Clients = () => {
             actionLabel="Clear Search"
             onAction={() => setSearchTerm("")}
           />
-        </motion.div>
+</motion.div>
       )}
+
+      {/* Client Modal */}
+      <ClientModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onClientCreated={handleClientCreated}
+      />
     </div>
   );
 };

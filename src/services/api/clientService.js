@@ -22,10 +22,11 @@ export const createClient = async (clientData) => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 300));
   
-  const newClient = {
+const newClient = {
     ...clientData,
     Id: Math.max(...clients.map(c => c.Id)) + 1,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    notes: clientData.notes || ""
   };
   
   clients.push(newClient);
