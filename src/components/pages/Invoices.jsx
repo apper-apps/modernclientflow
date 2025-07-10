@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import InvoiceModal from "@/components/molecules/InvoiceModal";
 import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
@@ -9,6 +8,7 @@ import Card from "@/components/atoms/Card";
 import Empty from "@/components/ui/Empty";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
+import InvoiceModal from "@/components/molecules/InvoiceModal";
 import SearchBar from "@/components/molecules/SearchBar";
 import { createInvoice, getAllInvoices } from "@/services/api/invoiceService";
 
@@ -55,7 +55,7 @@ const Invoices = () => {
     return variants[status] || "default";
   };
 
-  const getStatusIcon = (status) => {
+const getStatusIcon = (status) => {
     const icons = {
       draft: "FileText",
       sent: "Send",
@@ -63,7 +63,7 @@ const Invoices = () => {
       overdue: "AlertTriangle"
     };
     return icons[status] || "Circle";
-};
+  };
 
   const handleCreateInvoice = async (invoiceData) => {
     try {
@@ -285,12 +285,13 @@ icon="FileText"
         </motion.div>
       )}
 
-      {/* Invoice Modal */}
+{/* Invoice Modal */}
       <InvoiceModal
         isOpen={isInvoiceModalOpen}
         onClose={handleCloseInvoiceModal}
         onSubmit={handleCreateInvoice}
       />
+    </div>
   );
 };
 
