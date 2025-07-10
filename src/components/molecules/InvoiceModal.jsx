@@ -10,23 +10,24 @@ import { getAllProjects } from "@/services/api/projectService";
 const InvoiceModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
   const [projects, setProjects] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(false);
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     projectId: '',
     dueDate: '',
     status: 'draft',
+    paymentDate: '',
     lineItems: [{ description: '', amount: 0 }]
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   useEffect(() => {
     if (isOpen) {
       loadProjects();
       if (initialData) {
-        setFormData({
+setFormData({
           projectId: initialData.projectId || '',
           dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : '',
           status: initialData.status || 'draft',
+          paymentDate: initialData.paymentDate ? initialData.paymentDate.split('T')[0] : '',
           lineItems: initialData.lineItems || [{ description: '', amount: 0 }]
         });
       } else {
@@ -34,6 +35,7 @@ const InvoiceModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
           projectId: '',
           dueDate: '',
           status: 'draft',
+          paymentDate: '',
           lineItems: [{ description: '', amount: 0 }]
         });
       }
@@ -157,7 +159,7 @@ const InvoiceModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
 
     setIsSubmitting(true);
     
-    try {
+try {
       const total = calculateTotal();
       const invoiceData = {
         projectId: parseInt(formData.projectId),
@@ -169,6 +171,11 @@ const InvoiceModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
           item.description.trim() && item.amount > 0
         )
       };
+
+      // Add payment date if status is paid
+      if (formData.status === 'paid' && formData.paymentDate) {
+        invoiceData.paymentDate = new Date(formData.paymentDate).toISOString();
+      }
 
       await onSubmit(invoiceData);
       onClose();
@@ -245,7 +252,24 @@ const InvoiceModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             <option value="paid">Paid</option>
             <option value="overdue">Overdue</option>
           </select>
-        </div>
+</div>
+
+        {/* Payment Date - Only show if status is paid */}
+        {formData.status === 'paid' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Payment Date
+            </label>
+            <Input
+              type="date"
+              name="paymentDate"
+              value={formData.paymentDate}
+              onChange={handleInputChange}
+              className="w-full"
+              max={new Date().toISOString().split('T')[0]}
+            />
+          </div>
+        )}
 
         {/* Line Items */}
         <div>

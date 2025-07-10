@@ -5,12 +5,14 @@ import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 import Card from "@/components/atoms/Card";
+import Input from "@/components/atoms/Input";
+import Modal from "@/components/atoms/Modal";
 import Empty from "@/components/ui/Empty";
 import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
 import InvoiceModal from "@/components/molecules/InvoiceModal";
 import SearchBar from "@/components/molecules/SearchBar";
-import { createInvoice, getAllInvoices } from "@/services/api/invoiceService";
+import { createInvoice, getAllInvoices, markInvoiceAsSent, markInvoiceAsPaid } from "@/services/api/invoiceService";
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -19,6 +21,9 @@ const Invoices = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+  const [paymentDate, setPaymentDate] = useState("");
 
   const loadInvoices = async () => {
     try {
@@ -43,7 +48,13 @@ const Invoices = () => {
                          invoice.amount.toString().includes(searchTerm);
     const matchesStatus = statusFilter === "all" || invoice.status === statusFilter;
     return matchesSearch && matchesStatus;
-  });
+});
+
+  const calculateOutstandingAmount = () => {
+    return invoices
+      .filter(invoice => invoice.status !== "paid")
+      .reduce((total, invoice) => total + invoice.amount, 0);
+  };
 
   const getStatusVariant = (status) => {
     const variants = {
@@ -72,6 +83,46 @@ const getStatusIcon = (status) => {
     } catch (error) {
       throw error;
     }
+};
+
+  const handleSendInvoice = async (invoiceId) => {
+    try {
+      await markInvoiceAsSent(invoiceId);
+      await loadInvoices();
+      toast.success("Invoice marked as sent successfully!");
+    } catch (error) {
+      toast.error("Failed to mark invoice as sent");
+    }
+  };
+
+  const handleMarkAsPaid = async (invoiceId) => {
+    if (!paymentDate) {
+      toast.error("Please select a payment date");
+      return;
+    }
+    
+    try {
+      await markInvoiceAsPaid(invoiceId, paymentDate);
+      await loadInvoices();
+      setPaymentModalOpen(false);
+      setSelectedInvoiceId(null);
+      setPaymentDate("");
+      toast.success("Invoice marked as paid successfully!");
+    } catch (error) {
+      toast.error("Failed to mark invoice as paid");
+    }
+  };
+
+  const openPaymentModal = (invoiceId) => {
+    setSelectedInvoiceId(invoiceId);
+    setPaymentDate(new Date().toISOString().split('T')[0]);
+    setPaymentModalOpen(true);
+  };
+
+  const closePaymentModal = () => {
+    setPaymentModalOpen(false);
+    setSelectedInvoiceId(null);
+    setPaymentDate("");
   };
 
   const handleNewInvoiceClick = () => {
@@ -102,7 +153,7 @@ icon="FileText"
     );
   }
 
-  return (
+return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <motion.div
@@ -123,9 +174,18 @@ icon="FileText"
           <p className="text-gray-600 dark:text-gray-400">
             Manage invoices and track payments
           </p>
+          <div className="flex items-center gap-2 mt-2">
+            <ApperIcon name="DollarSign" size={16} className="text-orange-500" />
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Outstanding: 
+              <span className="ml-2 text-lg font-bold text-orange-600 dark:text-orange-400">
+                ${calculateOutstandingAmount().toLocaleString()}
+              </span>
+            </span>
+          </div>
         </div>
         
-<Button variant="primary" onClick={handleNewInvoiceClick}>
+        <Button variant="primary" onClick={handleNewInvoiceClick}>
           <ApperIcon name="Plus" size={16} className="mr-2" />
           New Invoice
         </Button>
@@ -242,7 +302,7 @@ icon="FileText"
                 )}
               </div>
               
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+<div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                 <Button variant="outline" size="sm">
                   <ApperIcon name="Eye" size={14} className="mr-2" />
                   View
@@ -250,9 +310,24 @@ icon="FileText"
                 
                 <div className="flex items-center gap-2">
                   {invoice.status === "draft" && (
-                    <Button variant="primary" size="sm">
+                    <Button 
+                      variant="primary" 
+                      size="sm"
+                      onClick={() => handleSendInvoice(invoice.Id)}
+                    >
                       <ApperIcon name="Send" size={14} className="mr-2" />
                       Send
+                    </Button>
+                  )}
+                  
+                  {(invoice.status === "sent" || invoice.status === "overdue") && (
+                    <Button 
+                      variant="success" 
+                      size="sm"
+                      onClick={() => openPaymentModal(invoice.Id)}
+                    >
+                      <ApperIcon name="CheckCircle2" size={14} className="mr-2" />
+                      Mark Paid
                     </Button>
                   )}
                   
@@ -291,6 +366,47 @@ icon="FileText"
         onClose={handleCloseInvoiceModal}
         onSubmit={handleCreateInvoice}
       />
+
+      {/* Payment Date Modal */}
+      <Modal
+        isOpen={paymentModalOpen}
+        onClose={closePaymentModal}
+        title="Mark Invoice as Paid"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-600 dark:text-gray-400">
+            Select the payment date for this invoice:
+          </p>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Payment Date *
+            </label>
+            <Input
+              type="date"
+              value={paymentDate}
+              onChange={(e) => setPaymentDate(e.target.value)}
+              className="w-full"
+              max={new Date().toISOString().split('T')[0]}
+            />
+          </div>
+          
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <Button variant="outline" onClick={closePaymentModal}>
+              Cancel
+            </Button>
+            <Button 
+              variant="primary" 
+              onClick={() => handleMarkAsPaid(selectedInvoiceId)}
+              disabled={!paymentDate}
+            >
+              <ApperIcon name="CheckCircle2" size={16} className="mr-2" />
+              Mark as Paid
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

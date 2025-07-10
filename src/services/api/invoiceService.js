@@ -82,6 +82,56 @@ export const updateInvoice = async (id, invoiceData) => {
   return { ...invoices[index] };
 };
 
+export const markInvoiceAsSent = async (id) => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 200));
+  
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) {
+    throw new Error("Invalid invoice ID");
+  }
+  
+  const index = invoices.findIndex(i => i.Id === parsedId);
+  if (index === -1) {
+    throw new Error("Invoice not found");
+  }
+  
+  if (invoices[index].status !== "draft") {
+    throw new Error("Only draft invoices can be marked as sent");
+  }
+  
+  invoices[index].status = "sent";
+  return { ...invoices[index] };
+};
+
+export const markInvoiceAsPaid = async (id, paymentDate) => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 200));
+  
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) {
+    throw new Error("Invalid invoice ID");
+  }
+  
+  const index = invoices.findIndex(i => i.Id === parsedId);
+  if (index === -1) {
+    throw new Error("Invoice not found");
+  }
+  
+  if (invoices[index].status === "paid") {
+    throw new Error("Invoice is already marked as paid");
+  }
+  
+  if (!paymentDate) {
+    throw new Error("Payment date is required");
+  }
+  
+  invoices[index].status = "paid";
+  invoices[index].paymentDate = new Date(paymentDate).toISOString();
+  
+  return { ...invoices[index] };
+};
+
 export const deleteInvoice = async (id) => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 200));
