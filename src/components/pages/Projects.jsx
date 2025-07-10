@@ -1,32 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
 import Card from "@/components/atoms/Card";
-import Badge from "@/components/atoms/Badge";
-import SearchBar from "@/components/molecules/SearchBar";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
+import Input from "@/components/atoms/Input";
+import Modal from "@/components/atoms/Modal";
 import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
-import { getAllProjects } from "@/services/api/projectService";
-
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import SearchBar from "@/components/molecules/SearchBar";
+import ProjectModal from "@/components/molecules/ProjectModal";
+import { createProject, getAllProjects } from "@/services/api/projectService";
+import { getAllClients } from "@/services/api/clientService";
 const Projects = () => {
   const [projects, setProjects] = useState([]);
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-
-  const loadProjects = async () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+const loadProjects = async () => {
     try {
       setLoading(true);
       setError("");
-      const projectData = await getAllProjects();
+      const [projectData, clientData] = await Promise.all([
+        getAllProjects(),
+        getAllClients()
+      ]);
       setProjects(projectData);
+      setClients(clientData);
     } catch (err) {
-      setError("Failed to load projects. Please try again.");
-      toast.error("Failed to load projects");
+      setError("Failed to load data. Please try again.");
+      toast.error("Failed to load data");
     } finally {
       setLoading(false);
     }
@@ -35,6 +43,11 @@ const Projects = () => {
   useEffect(() => {
     loadProjects();
   }, []);
+
+const getClientName = (clientId) => {
+    const client = clients.find(c => c.Id === clientId);
+    return client ? client.name : `Client ID: ${clientId}`;
+  };
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -76,8 +89,8 @@ const Projects = () => {
         title="No Projects Yet"
         description="Create your first project to start tracking your work"
         icon="FolderOpen"
-        actionLabel="Create Project"
-        onAction={() => toast.info("Create project functionality coming soon!")}
+actionLabel="Create Project"
+        onAction={() => setIsModalOpen(true)}
       />
     );
   }
@@ -105,7 +118,7 @@ const Projects = () => {
           </p>
         </div>
         
-        <Button variant="primary">
+<Button variant="primary" onClick={() => setIsModalOpen(true)}>
           <ApperIcon name="FolderPlus" size={16} className="mr-2" />
           New Project
         </Button>
@@ -175,8 +188,8 @@ const Projects = () => {
                   <h3 className="font-semibold text-gray-900 dark:text-white truncate mb-1">
                     {project.name}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Client ID: {project.clientId}
+<p className="text-sm text-gray-600 dark:text-gray-400">
+                    {getClientName(project.clientId)}
                   </p>
                 </div>
                 
@@ -267,8 +280,16 @@ const Projects = () => {
               setStatusFilter("all");
             }}
           />
-        </motion.div>
+</motion.div>
       )}
+
+      {/* Project Modal */}
+      <ProjectModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onProjectCreated={loadProjects}
+        clients={clients}
+      />
     </div>
   );
 };
