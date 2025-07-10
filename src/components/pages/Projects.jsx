@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import ApperIcon from "@/components/ApperIcon";
 import Badge from "@/components/atoms/Badge";
 import Button from "@/components/atoms/Button";
@@ -15,6 +16,7 @@ import ProjectModal from "@/components/molecules/ProjectModal";
 import { createProject, getAllProjects } from "@/services/api/projectService";
 import { getAllClients } from "@/services/api/clientService";
 const Projects = () => {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -244,8 +246,12 @@ actionLabel="Create Project"
                 </div>
               </div>
               
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button variant="outline" size="sm">
+<div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => navigate(`/projects/${project.Id}`)}
+                >
                   <ApperIcon name="Eye" size={14} className="mr-2" />
                   View
                 </Button>

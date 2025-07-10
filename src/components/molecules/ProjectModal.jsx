@@ -152,8 +152,8 @@ const ProjectModal = ({
     { value: 'completed', label: 'Completed', variant: 'success' }
   ];
 
-  const getClientName = (clientId) => {
-    const client = clients.find(c => c.id === clientId);
+const getClientName = (clientId) => {
+    const client = clients.find(c => c.Id === parseInt(clientId));
     return client ? client.name : 'Unknown Client';
   };
 
@@ -217,9 +217,9 @@ const ProjectModal = ({
                         ${errors.clientId ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
               required
             >
-              <option value="">Select a client</option>
+<option value="">Select a client</option>
               {clients.map(client => (
-                <option key={client.id} value={client.id}>
+                <option key={client.Id} value={client.Id}>
                   {client.name}
                 </option>
               ))}
