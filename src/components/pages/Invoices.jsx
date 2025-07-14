@@ -12,7 +12,7 @@ import Error from "@/components/ui/Error";
 import Loading from "@/components/ui/Loading";
 import InvoiceModal from "@/components/molecules/InvoiceModal";
 import SearchBar from "@/components/molecules/SearchBar";
-import { createInvoice, getAllInvoices, markInvoiceAsSent, markInvoiceAsPaid } from "@/services/api/invoiceService";
+import { createInvoice, getAllInvoices, markInvoiceAsPaid, markInvoiceAsSent } from "@/services/api/invoiceService";
 
 const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -320,12 +320,11 @@ return (
                     {new Date(invoice.dueDate).toLocaleDateString()}
                   </span>
                 </div>
-                
-                {new Date(invoice.dueDate) < new Date() && invoice.status !== "paid" && (
+{new Date(invoice.dueDate || invoice.due_date) < new Date() && invoice.status !== "paid" && (
                   <div className="flex items-center gap-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                     <ApperIcon name="AlertTriangle" size={14} className="text-red-600 dark:text-red-400" />
                     <span className="text-xs text-red-600 dark:text-red-400 font-medium">
-                      {Math.floor((new Date() - new Date(invoice.dueDate)) / (1000 * 60 * 60 * 24))} days overdue
+                      {Math.floor((new Date() - new Date(invoice.dueDate || invoice.due_date)) / (1000 * 60 * 60 * 24))} days overdue
                     </span>
                   </div>
                 )}

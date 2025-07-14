@@ -1,6 +1,86 @@
 import { startTaskTimer, stopTaskTimer, getTaskTimeLogs } from "@/services/api/taskService";
 import { getAllTasks } from "@/services/api/taskService";
 
+export const getAllTimeTrackingEntries = async () => {
+  try {
+    const { ApperClient } = window.ApperSDK;
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "task_id" } },
+        { field: { Name: "start_time" } },
+        { field: { Name: "end_time" } },
+        { field: { Name: "duration" } },
+        { field: { Name: "date" } },
+        { field: { Name: "Tags" } },
+        { field: { Name: "Owner" } }
+      ]
+    };
+
+    const response = await apperClient.fetchRecords("time_tracking_entry", params);
+    
+    if (!response.success) {
+      console.error(response.message);
+      throw new Error(response.message);
+    }
+
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching time tracking entries:", error);
+    throw error;
+  }
+};
+
+export const createTimeTrackingEntry = async (entryData) => {
+  try {
+    const { ApperClient } = window.ApperSDK;
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+
+    const params = {
+      records: [{
+        Name: entryData.name || entryData.Name || `Time Entry ${Date.now()}`,
+        task_id: parseInt(entryData.taskId || entryData.task_id),
+        start_time: entryData.startTime || entryData.start_time,
+        end_time: entryData.endTime || entryData.end_time,
+        duration: entryData.duration || 0,
+        date: entryData.date,
+        Tags: entryData.Tags || "",
+        Owner: entryData.Owner
+      }]
+    };
+
+    const response = await apperClient.createRecord("time_tracking_entry", params);
+    
+    if (!response.success) {
+      console.error(response.message);
+      throw new Error(response.message);
+    }
+
+    if (response.results) {
+      const successfulRecords = response.results.filter(result => result.success);
+      const failedRecords = response.results.filter(result => !result.success);
+      
+      if (failedRecords.length > 0) {
+        console.error(`Failed to create ${failedRecords.length} time entries:${JSON.stringify(failedRecords)}`);
+        throw new Error("Some time entries failed to create");
+      }
+      
+      return successfulRecords[0]?.data;
+    }
+  } catch (error) {
+    console.error("Error creating time tracking entry:", error);
+    throw error;
+  }
+};
+
 export const startTimer = async (taskId) => {
   try {
     const timerData = await startTaskTimer(taskId);
@@ -46,7 +126,7 @@ export const getProjectTimeTracking = async (projectId) => {
   
   try {
     const tasks = await getAllTasks();
-    const projectTasks = tasks.filter(t => t.projectId === String(projectId));
+    const projectTasks = tasks.filter(t => t.projectId === String(projectId) || t.project_id === String(projectId));
     
     let totalTime = 0;
     let activeTimers = 0;
@@ -54,20 +134,26 @@ export const getProjectTimeTracking = async (projectId) => {
     const timeLogs = [];
 
     projectTasks.forEach(task => {
-      if (task.timeTracking) {
-        totalTime += task.timeTracking.totalTime || 0;
-        
-        if (task.timeTracking.activeTimer) {
-          activeTimers++;
-        }
-        
-        if (task.timeTracking.timeLogs) {
-          totalEntries += task.timeTracking.timeLogs.length;
-          timeLogs.push(...task.timeTracking.timeLogs.map(log => ({
-            ...log,
-            taskId: task.Id,
-            taskTitle: task.title
-          })));
+      if (task.timeTracking || task.time_tracking) {
+        const tracking = task.timeTracking || task.time_tracking;
+        if (typeof tracking === 'string') {
+          // If it's a string, try to parse it or use default values
+          totalTime += 0;
+        } else {
+          totalTime += tracking.totalTime || 0;
+          
+          if (tracking.activeTimer) {
+            activeTimers++;
+          }
+          
+          if (tracking.timeLogs) {
+            totalEntries += tracking.timeLogs.length;
+            timeLogs.push(...tracking.timeLogs.map(log => ({
+              ...log,
+              taskId: task.Id,
+              taskTitle: task.title || task.Name
+            })));
+          }
         }
       }
     });
@@ -100,25 +186,31 @@ export const getAllTimeTracking = async () => {
     };
 
     tasks.forEach(task => {
-      if (task.timeTracking) {
-        summary.totalTime += task.timeTracking.totalTime || 0;
+      if (task.timeTracking || task.time_tracking) {
+        const tracking = task.timeTracking || task.time_tracking;
+        if (typeof tracking === 'string') {
+          // If it's a string, skip processing
+          return;
+        }
         
-        if (task.timeTracking.activeTimer) {
+        summary.totalTime += tracking.totalTime || 0;
+        
+        if (tracking.activeTimer) {
           summary.activeTimers++;
         }
         
-        if (task.timeTracking.timeLogs) {
-          summary.totalEntries += task.timeTracking.timeLogs.length;
+        if (tracking.timeLogs) {
+          summary.totalEntries += tracking.timeLogs.length;
         }
 
-        if (task.timeTracking.totalTime > 0 || task.timeTracking.activeTimer) {
+        if ((tracking.totalTime && tracking.totalTime > 0) || tracking.activeTimer) {
           summary.taskBreakdown.push({
             taskId: task.Id,
-            taskTitle: task.title,
-            projectId: task.projectId,
-            totalTime: task.timeTracking.totalTime || 0,
-            hasActiveTimer: !!task.timeTracking.activeTimer,
-            entryCount: task.timeTracking.timeLogs?.length || 0
+            taskTitle: task.title || task.Name,
+            projectId: task.projectId || task.project_id,
+            totalTime: tracking.totalTime || 0,
+            hasActiveTimer: !!tracking.activeTimer,
+            entryCount: tracking.timeLogs?.length || 0
           });
         }
       }
